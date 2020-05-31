@@ -148,7 +148,7 @@ int NEH(vector<vector<int>> tabela)
 int main()
 {
 	
-		Wczytaj("ta001.txt");
+		Wczytaj("ta002.txt");
 		for (int i = 0; i < tab.size(); i++)
 			tab[i].erase(tab[i].begin());	//usuwamy liczbe porzadkowa zadan
 		
