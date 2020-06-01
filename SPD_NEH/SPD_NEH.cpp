@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <chrono>
+
 using namespace std;
 
 
@@ -75,7 +76,112 @@ int cmax(vector<vector<int>> tabela)
 	return EndL[tabela.size() - 1][tabela[0].size() - 1];
 }
 
+double fRand(double fMin, double fMax)
+{
+	double f = (double)rand() / RAND_MAX;
+	return fMin + f * (fMax - fMin);
+}
 
+int Annealing(vector<vector<int>> tabela) {
+	double T = 1000;
+	int i, j, cmax_tmp, cmax_start;
+	double r, error, diff;
+	int L = liczba;
+	int x = T / 1000;
+	int a = 0.95;
+	int Tend = 0;
+	cmax_start = cmax(tabela);
+	while (T > Tend) {
+		for (int k = 1; k < L; k++) {
+			i = rand() % liczba;
+			j = rand() % liczba;
+			
+			swap(tabela[i], tabela[j]);
+			cmax_tmp = cmax(tabela);
+			if (cmax_tmp > cmax_start) {
+				r = fRand(0, 1);
+				diff = cmax_start - cmax_tmp;
+				double podziel = diff / T;
+				error = exp(podziel);
+				//cout << error << endl;
+				if (r >= error) swap(tabela[i], tabela[j]);
+
+			}
+		
+		}
+		
+		T = a*T;
+	}
+
+	return cmax_tmp;
+}
+
+int Annealing_2(vector<vector<int>> tabela) {
+	double T = 1000;
+	int i, j, cmax_tmp, cmax_start;
+	double r, error, diff;
+	int L = liczba;
+	int x = T / 1000;
+	int a = 0.9;
+	int Tend = 0;
+	cmax_start = cmax(tabela);
+	while (T > Tend) {
+		for (int k = 1; k < L; k++) {
+			i = rand() % liczba;
+			j = rand() % liczba;
+
+			swap(tabela[i], tabela[j]);
+			cmax_tmp = cmax(tabela);
+			if (cmax_tmp > cmax_start) {
+				r = fRand(0, 1);
+				diff = cmax_start - cmax_tmp;
+				double podziel = diff / T;
+				error = exp(podziel);
+				//cout << error << endl;
+				if (r >= error) swap(tabela[i], tabela[j]);
+
+			}
+
+		}
+
+		T = T - x;
+	}
+
+	return cmax_tmp;
+}
+int Annealing_3(vector<vector<int>> tabela) {
+	double T = 100;
+	int i, j, cmax_tmp, cmax_start;
+	double r, error, diff;
+	int L = sqrt(liczba);
+	int x = T / 100;
+	int a = 0.9;
+	int Tend = 0;
+	cmax_start = cmax(tabela);
+	while (T > Tend) {
+		for (int k = 1; k < L; k++) {
+			i = rand() % liczba;
+			j = rand() % liczba;
+
+			swap(tabela[i], tabela[j]);
+			cmax_tmp = cmax(tabela);
+			if (cmax_tmp > cmax_start) {
+				r = fRand(0, 1);
+				diff = cmax_start - cmax_tmp;
+				double podziel = diff / T;
+				error = exp(podziel);
+				//cout << error << endl;
+				if (r >= error) swap(tabela[i], tabela[j]);
+
+			}
+
+		}
+
+		T = T - x;
+	}
+
+	return cmax_tmp;
+}
 int NEH(vector<vector<int>> tabela)
 {
 	int wynik1 = 0;
@@ -148,15 +254,37 @@ int NEH(vector<vector<int>> tabela)
 int main()
 {
 	
-		Wczytaj("ta002.txt");
+		Wczytaj("ta085.txt");
 		for (int i = 0; i < tab.size(); i++)
 			tab[i].erase(tab[i].begin());	//usuwamy liczbe porzadkowa zadan
+
+		auto start = std::chrono::system_clock::now();
+		int wynik2 = Annealing_2(tab);
+		cout << "Wyzarzanie liniowe:" << wynik2 << endl;
+		auto end = std::chrono::system_clock::now();
+		std::chrono::duration<double> cz = end - start;
+		cout << "Czas wykonywania wyrzazania liniowego " << cz.count() << endl;
+
+		auto start4 = std::chrono::system_clock::now();
+		int wynik4 = Annealing_3(tab);
+		cout << "Wyzarzanie liniowe II wer:" << wynik4 << endl;
+		auto end4 = std::chrono::system_clock::now();
+		std::chrono::duration<double> cz4 = end4 - start4;
+		cout << "Czas wykonywania wyrzazania liniowego II wer " << cz4.count() << endl;
+		auto start2 = std::chrono::system_clock::now();
+
+		int wynik3 = Annealing(tab);
+		cout << "Wyzarzanie geometryczne:" << wynik3 << endl;
+		auto end2 = std::chrono::system_clock::now();
+		std::chrono::duration<double> cz2 = end2 - start2;
+		cout << "Czas wykonywania wyrzazania geometrycznego " << cz2.count() << endl;
 		
-		
-	
-		
+		auto start3 = std::chrono::system_clock::now();
 		int wynik = NEH(tab);//cmax(Pi);
-		cout << wynik << endl;
+		auto end3 = std::chrono::system_clock::now();
+		std::chrono::duration<double> cz3 = end3 - start3;
+		cout << "Czas wykonywania neha" << cz3.count() << endl;
+		cout <<"NEH:" << wynik << endl;
 	
 }
 
